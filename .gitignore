@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.DS_Store
+DESIGN.md
+playwright-report/
+test-results/
+*.local
+.local-archive/
+public/movemocar.config.json

@@ -1,0 +1,18 @@
+{
+  "ownerPhone": "13000000000",
+  "notification": {
+    "transport": "http",
+    "url": "https://api.day.app/YOUR_BARK_KEY",
+    "method": "POST",
+    "headers": {
+      "Content-Type": "application/json; charset=utf-8"
+    },
+    "bodyTemplate": {
+      "title": "{{vehicleTitle}}",
+      "body": "来自：{{phone}}\n留言：{{message}}",
+      "url": "tel:{{phone}}"
+    },
+    "timeoutMs": 8000,
+    "successStatus": [200, 299]
+  }
+}

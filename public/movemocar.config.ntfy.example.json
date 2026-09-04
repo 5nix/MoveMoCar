@@ -1,0 +1,28 @@
+{
+  "ownerPhone": "13000000000",
+  "notification": {
+    "transport": "http",
+    "url": "https://ntfy.sh",
+    "method": "POST",
+    "headers": {
+      "Content-Type": "application/json; charset=utf-8"
+    },
+    "bodyTemplate": {
+      "topic": "YOUR_LONG_RANDOM_TOPIC",
+      "title": "{{vehicleTitle}}",
+      "message": "来自：{{phone}}\n留言：{{message}}",
+      "priority": 4,
+      "click": "tel:{{phone}}",
+      "actions": [
+        {
+          "action": "view",
+          "label": "点击回拨",
+          "url": "tel:{{phone}}",
+          "clear": true
+        }
+      ]
+    },
+    "timeoutMs": 8000,
+    "successStatus": [200, 299]
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "ownerPhone": "13000000000",
+  "notification": {
+    "transport": "http",
+    "url": "https://example.com/webhook/movemocar",
+    "method": "POST",
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "bodyTemplate": {
+      "title": "{{vehicleTitle}}",
+      "body": "来自：{{phone}}\n留言：{{message}}",
+      "vehiclePlate": "{{vehiclePlate}}",
+      "pageUrl": "{{pageUrl}}",
+      "submittedAt": "{{submittedAt}}"
+    },
+    "timeoutMs": 8000,
+    "successStatus": [200, 299]
+  }
+}
