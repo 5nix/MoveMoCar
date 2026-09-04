@@ -2,7 +2,7 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
     <meta name="description" content="MoveMoCar 是一个无需后端的开源挪车码。扫描二维码后先发送留言，车主收到通知后再回拨。" />
     <meta name="robots" content="noindex, nofollow" />
     <meta name="theme-color" content="#f3f3ee" />
@@ -16,18 +16,28 @@
         document.documentElement.dataset.theme = theme === "dark" ? "dark" : "light";
       })();
     </script>
+    <style>
+      .hero__photo--night { opacity: 0; }
+      :root[data-theme="dark"] .hero__photo--day { opacity: 0; }
+      :root[data-theme="dark"] .hero__photo--night { opacity: 1; }
+      .landing--loading .hero__photo { filter: blur(18px); }
+    </style>
     <script type="module" src="/src/landing.ts"></script>
   </head>
-  <body>
+  <body class="landing--loading">
     <a class="skip-link" href="#main" data-i18n="skip">跳到主要内容</a>
     <header class="site-header" data-header>
       <nav class="nav shell" aria-label="主导航" data-i18n-aria="navAria">
         <a class="brand" href="#top" aria-label="MoveMoCar 首页" data-i18n-aria="homeAria"><span class="brand__mark" aria-hidden="true"></span><span>MoveMoCar</span></a>
-        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links"><span class="nav-toggle__line"></span><span class="nav-toggle__line"></span><span class="sr-only" data-i18n="menu">打开菜单</span></button>
-        <div class="nav-links" id="nav-links">
-          <a href="#how" data-i18n="navHow">工作方式</a><a href="#builder" data-i18n="navCreate">生成</a><a href="#system" data-i18n="navTech">技术</a><a href="#faq">FAQ</a>
-          <div class="nav-controls"><button class="nav-control" type="button" data-language-toggle aria-label="Switch to English">EN</button><button class="nav-control nav-control--theme" type="button" data-theme-toggle aria-label="切换深色模式"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.64 5.64l1.42 1.42m9.88 9.88 1.42 1.42M18.36 5.64l-1.42 1.42M7.06 16.94l-1.42 1.42"/><circle cx="12" cy="12" r="4"/></svg><span data-theme-label>深色</span></button></div>
-          <a class="nav-cta nav-cta--github" href="https://github.com/5nix/MoveMoCar" target="_blank" rel="noreferrer"><span class="ui-icon" data-icon="github" aria-hidden="true"></span><span>GitHub</span></a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="打开菜单"><span class="nav-toggle__line"></span><span class="nav-toggle__line"></span></button>
+        <div class="nav-links t-acc" id="nav-links" data-open="false">
+          <div class="t-acc-panel"><div class="t-acc-panel-inner nav-links__inner">
+            <div class="nav-links__content">
+              <a href="#how" data-i18n="navHow">工作方式</a><a href="#builder" data-i18n="navCreate">生成</a><a href="#system" data-i18n="navTech">技术</a><a href="#faq">FAQ</a>
+              <div class="nav-controls"><button class="nav-control" type="button" data-language-toggle aria-label="Switch to English">EN</button><button class="nav-control nav-control--theme" type="button" data-theme-toggle aria-label="切换深色模式"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.64 5.64l1.42 1.42m9.88 9.88 1.42 1.42M18.36 5.64l-1.42 1.42M7.06 16.94l-1.42 1.42"/><circle cx="12" cy="12" r="4"/></svg><span data-theme-label>深色</span></button></div>
+              <a class="nav-cta nav-cta--github" href="https://github.com/5nix/MoveMoCar" target="_blank" rel="noreferrer"><span class="ui-icon" data-icon="github" aria-hidden="true"></span><span>GitHub</span></a>
+            </div>
+          </div></div>
         </div>
       </nav>
     </header>
@@ -36,20 +46,19 @@
       <section class="hero" id="top" aria-labelledby="hero-title">
         <img class="hero__photo hero__photo--day" src="/assets/landing/campaign-hero-3d-white-v2.webp" alt="白色圆形展示台上停放的奶白色汽车，前挡风玻璃内放着绿色联系卡" data-i18n-alt="heroAlt" width="1536" height="1024" fetchpriority="high" />
         <img class="hero__photo hero__photo--night" src="/assets/landing/campaign-hero-3d-night-v1.webp" alt="" aria-hidden="true" width="1536" height="1024" fetchpriority="high" />
-        <canvas class="hero__shader" data-hero-shader aria-hidden="true"></canvas>
         <div class="hero__veil"></div>
         <div class="shell hero__layout">
-          <div class="hero__copy" data-reveal><p class="kicker" data-i18n="heroKicker">无需后端的开源挪车码</p><h1 id="hero-title" data-i18n-html="heroTitle">扫描挪车码发送留言<br />需要的时候再打电话</h1><p data-i18n-html="heroBody">MoveMoCar 谐音自 Move Mocha ☕️<br />希望这个简洁优雅的小项目，也能给你带来摩卡般的丝滑体验</p><div class="hero__actions"><a class="button button--accent" href="./create/" data-localized-href="./create/"><span data-i18n="ctaCreate">创建挪车码</span><span class="ui-icon" data-icon="arrow" aria-hidden="true"></span></a><a class="text-link" href="./m/demo/" data-localized-href="./m/demo/"><span data-i18n="heroDemo">体验扫码视角</span><span class="ui-icon" data-icon="scan" aria-hidden="true"></span></a></div></div>
+          <div class="hero__copy" data-reveal><p class="kicker" data-i18n="heroKicker">无需后端的开源挪车码</p><h1 id="hero-title" data-i18n-html="heroTitle">扫描挪车码发送留言<br />需要的时候再打电话</h1><p data-i18n-html="heroBody">MoveMoCar 谐音自 Move Mocha ☕️<br />希望这个简洁优雅的小项目，也能给你带来摩卡般的丝滑体验</p><div class="hero__actions"><a class="button button--accent" href="./create/" data-localized-href="./create/"><span data-i18n="ctaCreate">创建挪车码</span><span class="ui-icon" data-icon="arrow" aria-hidden="true"></span></a><a class="button button--outline" href="./m/demo/" data-localized-href="./m/demo/"><span data-i18n="heroDemo">体验扫码视角</span><span class="ui-icon" data-icon="scan" aria-hidden="true"></span></a></div></div>
         </div>
       </section>
 
-      <section class="premise" id="privacy" aria-labelledby="premise-title">
-        <canvas class="premise__shader" data-premise-shader aria-hidden="true"></canvas><div class="shell premise__layout" data-reveal><div class="premise__brand"><img src="/src/assets/movemocar-mark.svg" alt="" /></div><h2 id="premise-title" data-i18n="premiseTitle">一点点门槛</h2><div class="premise__copy"><p data-i18n="premise1">MoveMoCar 没有试图把手机号变成什么无法破解的秘密。</p><p data-i18n="premise2">号码仍然存在二维码中，有心研究二维码内容的人依然可以把它找出来。</p><p data-i18n="premise3">它做的事情很简单：让手机号不再直接写在车窗上，也不再成为扫码之后第一眼就能看到的东西。</p><p data-i18n="premise4">对于正常挪车，多出来的只是填写电话和一句留言。</p><p data-i18n="premise5">对于随手扫一下、抄走号码的人，这大概已经多了一点麻烦。</p></div></div>
+      <section class="premise reveal-card" id="privacy" aria-labelledby="premise-title" data-reveal>
+        <canvas class="premise__shader" data-premise-shader aria-hidden="true"></canvas><div class="shell premise__layout" data-reveal><div class="premise__brand"><img src="/src/assets/movemocar-mark.svg" alt="" /></div><h2 id="premise-title" data-i18n="premiseTitle">一点点门槛</h2><div class="premise__copy"><p data-i18n="premise1">MoveMoCar 要求请求挪车的人向车主主动发送联系电话和留言之后才可以获取车主号码。</p><p data-i18n="premise2">对于正常挪车，多出来的只是填写电话和一句留言，而对于随手抄走号码的人，这大概已经多了一点麻烦。</p></div></div>
       </section>
 
-      <section class="relay" id="how" aria-labelledby="relay-title">
+      <section class="relay reveal-card" id="how" aria-labelledby="relay-title" data-reveal>
         <header class="shell section-head" data-reveal><h2 id="relay-title" data-i18n="relayTitle">工作方式</h2><div class="section-head__copy"><p data-i18n="relay1">把生成好的二维码放在车里。别人扫码以后，会先看到一个很简单的联系页面，填写自己的手机号和留言。</p><p data-i18n="relay2">这些信息会被发送到你配置好的通知渠道，比如 Bark、WxPusher 或 ntfy。你收到通知后，可以直接回拨。</p></div></header>
-        <div class="shell relay__stage" data-reveal>
+        <div class="shell relay__stage reveal-card" data-reveal>
           <img class="relay__backdrop" src="/assets/landing/campaign-scan-v3.webp" alt="扫码者从车侧用手机扫描车窗内的二维码联系卡" data-i18n-alt="relayAlt" width="1672" height="941" loading="lazy" />
           <div class="relay__phone"><div class="iphone iphone--contact"><div class="iphone__screen"><img data-screen="contact" src="/assets/app-screens/iphone-15-pro/contact-form-zh-light.webp" alt="iPhone 15 Pro 中的 MoveMoCar 联系页面，扫码者填写自己的电话和挪车留言" data-i18n-alt="contactAlt" width="1179" height="2556" loading="lazy" /></div><i class="iphone__island" aria-hidden="true"></i></div></div>
           <div class="notice"><div class="notice__top"><img src="/src/assets/movemocar-mark.svg" alt="" /><strong>MoveMoCar</strong><time data-i18n="noticeNow">现在</time></div><p data-i18n="noticeTitle">有人需要您挪车</p><small data-i18n="noticeMessage">车辆挡住出口，麻烦您挪一下，谢谢！</small><div><span>136 1234 5678</span><strong data-i18n="noticeCall">回拨</strong></div></div>
@@ -57,30 +66,30 @@
         <ol class="shell relay__steps" data-reveal><li><span>1</span><div><strong data-i18n="step1Title">扫描车窗内的二维码</strong><p data-i18n="step1Body">打开联系页面，不显示车主号码</p></div></li><li><span>2</span><div><strong data-i18n="step2Title">留下自己的电话和挪车说明</strong><p data-i18n="step2Body">页面只收集扫码者提供的信息</p></div></li><li><span>3</span><div><strong data-i18n="step3Title">车主收到通知后回拨</strong><p data-i18n="step3Body">通知失败的情况下扫码者可以向车主拨号</p></div></li></ol>
       </section>
 
-      <section class="builder" id="builder" aria-labelledby="builder-title">
+      <section class="builder reveal-card" id="builder" aria-labelledby="builder-title" data-reveal>
         <div class="shell builder__layout"><div class="builder__copy" data-reveal><h2 id="builder-title" data-i18n="builderTitle">生成挪车码</h2><p data-i18n="builderBody">填写联系电话，按需添加通知渠道。配置会写入二维码本身，不需要注册账号。</p><ul><li><span>1</span><span data-i18n="builderStep1">填写联系方式与车辆标识</span></li><li><span>2</span><span data-i18n="builderStep2">添加并测试通知渠道</span></li><li><span>3</span><span data-i18n="builderStep3">保存二维码，打印后放在车内</span></li></ul><a class="button button--accent" href="./create/" data-localized-href="./create/"><span data-i18n="ctaOpen">创建挪车码</span><span class="ui-icon" data-icon="arrow" aria-hidden="true"></span></a></div>
-          <div class="builder__product" data-reveal><div class="builder__phone builder__phone--main iphone"><div class="iphone__screen"><img data-screen="create" src="/assets/app-screens/iphone-15-pro/create-zh-light.webp" alt="iPhone 15 Pro 中的 MoveMoCar 创建页面" data-i18n-alt="createAlt" width="1179" height="2556" loading="lazy" /></div><i class="iphone__island" aria-hidden="true"></i></div><div class="builder__phone builder__phone--result iphone"><div class="iphone__screen"><img data-screen="result" src="/assets/app-screens/iphone-15-pro/qr-result-zh-light.webp" alt="iPhone 15 Pro 中生成完成的 MoveMoCar 挪车二维码" data-i18n-alt="resultAlt" width="1179" height="2556" loading="lazy" /></div><i class="iphone__island" aria-hidden="true"></i></div></div>
+          <div class="builder__product reveal-card" data-reveal><div class="builder__phone builder__phone--main iphone"><div class="iphone__screen"><img data-screen="create" src="/assets/app-screens/iphone-15-pro/create-zh-light.webp" alt="iPhone 15 Pro 中的 MoveMoCar 创建页面" data-i18n-alt="createAlt" width="1179" height="2556" loading="lazy" /></div><i class="iphone__island" aria-hidden="true"></i></div><div class="builder__phone builder__phone--result iphone"><div class="iphone__screen"><img data-screen="result" src="/assets/app-screens/iphone-15-pro/qr-result-zh-light.webp" alt="iPhone 15 Pro 中生成完成的 MoveMoCar 挪车二维码" data-i18n-alt="resultAlt" width="1179" height="2556" loading="lazy" /></div><i class="iphone__island" aria-hidden="true"></i></div></div>
         </div>
       </section>
 
       <section class="system" id="system" aria-labelledby="system-title">
         <div class="shell system__layout"><header class="system__head" data-reveal><h2 id="system-title" data-i18n="systemTitle">编码与技术参数</h2><p data-i18n="systemBody">联系电话、车辆标识和通知配置使用专用的开源 M1 格式写进二维码。扫码后，由浏览器读取并直接向通知服务发送消息。</p></header>
-          <div class="flow" data-reveal aria-label="电话号码和通知配置经过编码写入二维码，再由浏览器解码并通知车主" data-i18n-aria="flowAria"><canvas class="flow__shader" data-flow-shader aria-hidden="true"></canvas><div class="flow__input"><span>INPUT</span><dl><div><dt data-i18n="inputPhone">联系电话</dt><dd>139 0000 0000</dd></div><div><dt data-i18n="inputVehicle">车辆标识</dt><dd data-i18n="inputPlate">浙A12345</dd></div><div><dt data-i18n="inputChannel">通知渠道</dt><dd>Bark</dd></div></dl></div><div class="flow__transform"><span>CBOR → BASE32</span><code>M1.QJDBHEAAAAAA62PG<br />WWMUCMJSGM2DK<br /><b>.D</b>QGBAA3LUMVZXILLC…</code><i aria-hidden="true"></i></div><div class="flow__qr"><span>PRINT</span><img src="/assets/landing/m1-flow-qr.svg" alt="M1 示例配置生成的二维码" data-i18n-alt="qrAlt" width="256" height="256" loading="lazy" /></div><div class="flow__output"><span>BROWSER</span><img src="/src/assets/movemocar-mark.svg" alt="" /><strong data-i18n="flowOutput">解码并通知车主</strong></div></div>
+          <div class="flow reveal-card" data-reveal aria-label="电话号码和通知配置经过编码写入二维码，再由浏览器解码并通知车主" data-i18n-aria="flowAria"><canvas class="flow__shader" data-flow-shader aria-hidden="true"></canvas><div class="flow__input"><span>INPUT</span><dl><div><dt data-i18n="inputPhone">联系电话</dt><dd>139 0000 0000</dd></div><div><dt data-i18n="inputVehicle">车辆标识</dt><dd data-i18n="inputPlate">浙A12345</dd></div><div><dt data-i18n="inputChannel">通知渠道</dt><dd>Bark</dd></div></dl></div><div class="flow__transform"><span>CBOR → BASE32</span><code>M1.QJDBHEAAAAAA62PG<br />WWMUCMJSGM2DK<br /><b>.D</b>QGBAA3LUMVZXILLC…</code></div><i class="flow__beam" aria-hidden="true"></i><div class="flow__qr"><span>PRINT</span><img src="/assets/landing/m1-flow-qr.svg" alt="M1 示例配置生成的二维码" data-i18n-alt="qrAlt" width="256" height="256" loading="lazy" /></div><div class="flow__output"><span>BROWSER</span><img src="/src/assets/movemocar-mark.svg" alt="" /><strong data-i18n="flowOutput">解码并通知车主</strong></div></div>
           <div class="system__notes" data-reveal><article><span data-i18n="note1Label">通知方式</span><strong>Bark / WxPusher<br />ntfy / Webhook</strong></article><article><span data-i18n="note2Label">发送方式</span><strong data-i18n-html="note2Value">扫码者的浏览器<br />直接发送</strong></article><article><span data-i18n="note3Label">部署方式</span><strong data-i18n-html="note3Value">静态托管<br />或自己的 Web Server</strong></article></div>
           <p class="system__limit" data-reveal><strong data-i18n="boundaryLabel">边界说明</strong><span data-i18n="boundaryBody">M1 不加密车主号码或通知凭据。有意分析二维码仍可读取其中信息；MoveMoCar 减少的是日常场景里的直接暴露。</span></p>
         </div>
       </section>
 
-      <section class="faq" id="faq" aria-labelledby="faq-title"><div class="shell faq__layout"><header data-reveal><h2 id="faq-title" data-i18n="faqTitle">常见问题</h2><a class="text-link" href="./README.md" data-readme-link><span data-i18n="faqReadme">查看完整 README</span><span class="ui-icon" data-icon="arrow" aria-hidden="true"></span></a></header><div class="faq__list" data-reveal>
+      <section class="faq reveal-card" id="faq" aria-labelledby="faq-title" data-reveal><div class="shell faq__layout"><header data-reveal><h2 id="faq-title" data-i18n="faqTitle">常见问题</h2><a class="text-link" href="./README.md" data-readme-link><span data-i18n="faqReadme">查看完整 README</span><span class="ui-icon" data-icon="arrow" aria-hidden="true"></span></a></header><div class="faq__list" data-reveal>
         <article><button class="faq__question" type="button" aria-expanded="false" aria-controls="faq-answer-1"><span>1</span><h3 data-i18n="faq1Q">不会配置 Bark、WxPusher 或 ntfy，还能用吗？</h3><i aria-hidden="true"></i></button><div class="faq__answer" id="faq-answer-1" aria-hidden="true"><div><p data-i18n="faq1A">可以。你依然可以生成只包含联系电话的二维码，只是体验会更接近普通挪车码。有条件的话，还是建议配置一个通知渠道。</p></div></div></article>
         <article><button class="faq__question" type="button" aria-expanded="false" aria-controls="faq-answer-2"><span>2</span><h3 data-i18n="faq2Q">更换手机号或通知配置以后怎么办？</h3><i aria-hidden="true"></i></button><div class="faq__answer" id="faq-answer-2" aria-hidden="true"><div><p data-i18n="faq2A">重新生成二维码并重新打印。配置跟着二维码本身走，已经打印出来的二维码不会自动更新。</p></div></div></article>
         <article><button class="faq__question" type="button" aria-expanded="false" aria-controls="faq-answer-3"><span>3</span><h3 data-i18n="faq3Q">二维码被别人解析以后，能看到我的号码吗？</h3><i aria-hidden="true"></i></button><div class="faq__answer" id="faq-answer-3" aria-hidden="true"><div><p data-i18n="faq3A">能。如果有人有意分析二维码内容，仍然可以读取其中的信息。MoveMoCar 主要减少的是日常场景里的直接暴露。</p></div></div></article>
         <article><button class="faq__question" type="button" aria-expanded="false" aria-controls="faq-answer-4"><span>4</span><h3 data-i18n="faq4Q">通知服务挂了，会不会完全联系不到我？</h3><i aria-hidden="true"></i></button><div class="faq__answer" id="faq-answer-4" aria-hidden="true"><div><p data-i18n="faq4A">不会。MoveMoCar 会同时尝试已经配置的通知渠道；如果全部失败，页面会提示发送失败并开放直接拨号入口。</p></div></div></article>
       </div></div></section>
 
-      <section class="closing" aria-labelledby="closing-title"><img class="closing__photo" src="/assets/landing/campaign-notify-v2.webp" alt="车主在安静的室内查看手机通知" data-i18n-alt="closingAlt" width="1672" height="941" loading="lazy" /><div class="closing__shade"></div><div class="shell closing__layout" data-reveal><div class="closing__copy"><h2 id="closing-title" data-i18n-html="closingTitle">生成你的<br />挪车码</h2><a class="button button--accent" href="./create/" data-localized-href="./create/"><span data-i18n="ctaOpen">创建挪车码</span><span class="ui-icon" data-icon="arrow" aria-hidden="true"></span></a></div><div class="closing__brand"><img src="/src/assets/movemocar-mark.svg" alt="" /><span>MoveMoCar</span></div></div></section>
+      <section class="closing reveal-card" aria-labelledby="closing-title" data-reveal><img class="closing__photo" data-reveal src="/assets/landing/campaign-notify-v2.webp" alt="车主在安静的室内查看手机通知" data-i18n-alt="closingAlt" width="1672" height="941" loading="lazy" /><div class="closing__shade"></div><div class="shell closing__layout" data-reveal><div class="closing__copy"><h2 id="closing-title" data-i18n-html="closingTitle">生成你的<br />挪车码</h2><a class="button button--accent" href="./create/" data-localized-href="./create/"><span data-i18n="ctaOpen">创建挪车码</span><span class="ui-icon" data-icon="arrow" aria-hidden="true"></span></a></div><div class="closing__brand"><img src="/src/assets/movemocar-mark.svg" alt="" /><span>MoveMoCar</span></div></div></section>
     </main>
 
-    <footer class="site-footer"><div class="shell footer__layout"><p>MoveMoCar <span data-footer-text hidden></span></p><nav aria-label="页脚导航" data-i18n-aria="footerAria"><a href="./m/demo/" data-localized-href="./m/demo/" data-i18n="footerContact">联系页面</a><a href="https://github.com/5nix/MoveMoCar" target="_blank" rel="noreferrer">GitHub</a><a href="./README.md" data-readme-link>README</a></nav></div></footer>
+    <footer class="site-footer"><div class="shell footer__layout"><p>MoveMoCar <span data-footer-text hidden></span></p><nav aria-label="页脚导航" data-i18n-aria="footerAria"><a href="https://github.com/5nix/MoveMoCar" target="_blank" rel="noreferrer">GitHub</a></nav></div></footer>
   </body>
 </html>
