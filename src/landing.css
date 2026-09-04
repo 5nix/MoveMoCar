@@ -49,7 +49,7 @@ ul { padding:0; list-style:none; }
 
 .hero { position:relative; height:78svh; min-height:620px; max-height:760px; overflow:hidden; background:#eef0ed; isolation:isolate; }
 .hero { color:#0a110d; }
-.hero__photo { position:absolute; z-index:-3; inset:-4%; width:108%; height:108%; max-width:none; object-fit:cover; object-position:center; clip-path:inset(0 0 0 0); transform:translate3d(var(--hero-x,0),var(--hero-y,0),0) scale(1.035); animation:hero-photo-reveal 1400ms cubic-bezier(.22,1,.36,1) both; transition:opacity 420ms ease,transform 650ms cubic-bezier(.22,1,.36,1); will-change:transform,clip-path; }
+.hero__photo { position:absolute; z-index:-3; inset:-4%; width:108%; height:108%; max-width:none; object-fit:cover; object-position:center; transform:translate3d(var(--hero-x,0),var(--hero-y,0),0) scale(1.035); transition:opacity 420ms ease,transform 650ms cubic-bezier(.22,1,.36,1); will-change:transform; }
 .hero__photo--night { opacity:0; }
 .hero__shader { position:absolute; z-index:-2; inset:0; width:100%; height:100%; opacity:.82; pointer-events:none; }
 .hero__veil { position:absolute; z-index:-1; inset:0; background:linear-gradient(90deg,rgb(242 243 238 / 21%) 0,transparent 53%),linear-gradient(0deg,rgb(8 16 12 / 20%) 0,transparent 36%),linear-gradient(180deg,rgb(255 255 255 / 16%),transparent 23%); pointer-events:none; }
@@ -243,7 +243,6 @@ ul { padding:0; list-style:none; }
 
 @keyframes flow-scan { from { transform:translateX(-105%); } to { transform:translateX(365%); } }
 @keyframes qr-scan { 0%,18% { transform:translateY(-56%); opacity:0; } 34% { opacity:.72; } 70%,100% { transform:translateY(56%); opacity:0; } }
-@keyframes hero-photo-reveal { 0% { clip-path:inset(0 100% 0 0); transform:translate3d(-2.5%,0,0) scale(1.08); } 100% { clip-path:inset(0 0 0 0); } }
 @keyframes builder-orbit { 0% { transform:rotate(0deg) scale(.96); border-radius:48% 52% 46% 54%; } 50% { transform:rotate(180deg) scale(1.04); border-radius:56% 44% 53% 47%; } 100% { transform:rotate(360deg) scale(.96); border-radius:48% 52% 46% 54%; } }
 @keyframes closing-drift { 0% { transform:scale(1.045) translate3d(-.7%,0,0); } 50% { transform:scale(1.075) translate3d(.8%,-.5%,0); } 100% { transform:scale(1.055) translate3d(1.2%,.4%,0); } }
 
@@ -296,8 +295,7 @@ ul { padding:0; list-style:none; }
   :root[data-theme="dark"] .nav-control { color:var(--ink); }
   .hero { height:80svh; min-height:650px; max-height:720px; }
   .hero__photo { inset:-4%; width:108%; height:108%; transform:translate3d(var(--hero-x,0),var(--hero-y,0),0) scale(1.025); }
-  .hero__photo--day { object-position:68% center; }
-  .hero__photo--night { object-position:38% center; }
+  .hero__photo--day,.hero__photo--night { object-position:38% center; }
   .hero__copy { top:19%; right:0; left:0; width:auto; }
   .hero__copy h1 { max-width:none; font-size:40px; }
   .hero__copy>p:not(.kicker) { max-width:23em; font-size:16px; }
@@ -350,7 +348,6 @@ ul { padding:0; list-style:none; }
 @media (max-width:700px) {
   .shell { width:calc(100% - 32px); }
   .hero { height:82svh; min-height:620px; max-height:700px; }
-  .hero__photo--day { object-position:69% center; }
   .hero__veil { background:linear-gradient(180deg,rgb(242 243 238 / 93%) 0,rgb(242 243 238 / 78%) 57%,rgb(242 243 238 / 28%) 72%,transparent 88%); }
   :root[data-theme="dark"] .hero__veil { background:linear-gradient(180deg,rgb(2 7 10 / 92%) 0,rgb(2 7 10 / 76%) 58%,rgb(2 7 10 / 32%) 74%,transparent 90%); }
   .hero__copy { top:16%; }
@@ -421,8 +418,7 @@ ul { padding:0; list-style:none; }
 
 @media (max-width:1080px) and (max-height:520px) and (orientation:landscape) {
   .hero { height:100svh; min-height:390px; max-height:520px; }
-  .hero__photo--day { object-position:72% 47%; }
-  .hero__photo--night { object-position:52% 48%; }
+  .hero__photo--day,.hero__photo--night { object-position:52% 48%; }
   .hero__copy { top:82px; right:auto; width:500px; }
   .hero__copy h1 { margin-top:9px; font-size:36px; line-height:1.01; }
   .hero__copy>p:not(.kicker) { max-width:29em; margin-top:12px; font-size:14px; line-height:1.42; }

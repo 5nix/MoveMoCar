@@ -160,6 +160,13 @@ window.addEventListener("keydown", (event) => { if (event.key === "Escape") clos
 
 const hero = document.querySelector<HTMLElement>(".hero");
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const webglContextAttributes: WebGLContextAttributes = {
+  alpha: true,
+  antialias: false,
+  depth: false,
+  premultipliedAlpha: true,
+  stencil: false,
+};
 
 const runAnimationWhenVisible = (element: Element, renderFrame: (now: number) => void) => {
   let frame = 0;
@@ -222,7 +229,7 @@ const initMotionRegions = () => {
 const initHeroShader = () => {
   const canvas = document.querySelector<HTMLCanvasElement>("[data-hero-shader]");
   if (!canvas || reducedMotion) return;
-  const gl = canvas.getContext("webgl", { alpha: true, antialias: false, premultipliedAlpha: false });
+  const gl = canvas.getContext("webgl", webglContextAttributes);
   if (!gl) return;
 
   const vertexSource = `
@@ -254,7 +261,8 @@ const initHeroShader = () => {
       float alpha = (sweep * .15 + halo + spark * rightMask) * rightMask * mix(.72, 1.32, darkMode);
       vec3 mint = vec3(.56, .89, .57);
       vec3 color = mix(mint, vec3(.91, 1.0, .93), smoothstep(.0, .18, sweep));
-      gl_FragColor = vec4(color, clamp(alpha, 0.0, .24));
+      alpha = clamp(alpha, 0.0, .24);
+      gl_FragColor = vec4(color * alpha, alpha);
     }
   `;
 
@@ -324,7 +332,7 @@ const initHeroShader = () => {
 const initPremiseShader = () => {
   const canvas = document.querySelector<HTMLCanvasElement>("[data-premise-shader]");
   if (!canvas || reducedMotion) return;
-  const gl = canvas.getContext("webgl", { alpha: true, antialias: false, premultipliedAlpha: false });
+  const gl = canvas.getContext("webgl", webglContextAttributes);
   if (!gl) return;
   const vertexSource = `
     attribute vec2 position;
@@ -364,7 +372,7 @@ const initPremiseShader = () => {
       float outerFade = 1.0 - smoothstep(1.12, 1.48, distanceField);
       float alpha = line * hollow * outerFade * mix(.14, .17, darkMode);
       vec3 lineColor = mix(vec3(.075, .19, .095), vec3(.56, .89, .57), darkMode);
-      gl_FragColor = vec4(lineColor, alpha);
+      gl_FragColor = vec4(lineColor * alpha, alpha);
     }
   `;
   const compile = (type: number, source: string) => {
@@ -421,7 +429,7 @@ const initPremiseShader = () => {
 const initFlowShader = () => {
   const canvas = document.querySelector<HTMLCanvasElement>("[data-flow-shader]");
   if (!canvas || reducedMotion) return;
-  const gl = canvas.getContext("webgl", { alpha: true, antialias: false, premultipliedAlpha: false });
+  const gl = canvas.getContext("webgl", webglContextAttributes);
   if (!gl) return;
   const vertexSource = `
     attribute vec2 position;
@@ -449,7 +457,9 @@ const initFlowShader = () => {
       float alpha = (mainTrace * (.1 + runner * .48) + echoes * .08 + dataTicks * .24) * fade;
       vec3 mint = vec3(.56, .89, .57);
       vec3 light = vec3(.86, 1.0, .88);
-      gl_FragColor = vec4(mix(mint, light, runner), clamp(alpha, 0.0, .48));
+      alpha = clamp(alpha, 0.0, .48);
+      vec3 color = mix(mint, light, runner);
+      gl_FragColor = vec4(color * alpha, alpha);
     }
   `;
   const compile = (type: number, source: string) => {

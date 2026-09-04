@@ -1,7 +1,21 @@
 import { expect, test } from "@playwright/test";
 import { existsSync } from "node:fs";
+import { PNG } from "pngjs";
 import QRCode from "qrcode";
 import { decodeMoveCode } from "../src/qr-config";
+
+const averageRgbDifference = (first: Buffer, second: Buffer) => {
+  const a = PNG.sync.read(first);
+  const b = PNG.sync.read(second);
+  expect([a.width, a.height]).toEqual([b.width, b.height]);
+  let difference = 0;
+  for (let index = 0; index < a.data.length; index += 4) {
+    difference += Math.abs(a.data[index] - b.data[index]);
+    difference += Math.abs(a.data[index + 1] - b.data[index + 1]);
+    difference += Math.abs(a.data[index + 2] - b.data[index + 2]);
+  }
+  return difference / (a.width * a.height * 3);
+};
 
 test("所有页面使用统一的圆底品牌网站图标", async ({ page }) => {
   for (const path of ["/", "/create/", "/m/", "/m/demo/"]) {
@@ -105,7 +119,47 @@ test("Landing Page 在手机宽度没有横向溢出且菜单可用", async ({ p
   await page.getByRole("button", { name: "Open menu" }).click();
   await expect(page.getByRole("link", { name: "Technology" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Technology" })).toHaveCSS("color", "rgb(238, 244, 239)");
+  const heroImages = await page.locator(".hero__photo").evaluateAll((images) => images.map((image) => ({
+    animationName: getComputedStyle(image).animationName,
+    objectPosition: getComputedStyle(image).objectPosition,
+  })));
+  expect(heroImages.map(({ animationName }) => animationName)).toEqual(["none", "none"]);
+  expect(new Set(heroImages.map(({ objectPosition }) => objectPosition)).size).toBe(1);
   await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+});
+
+test("Landing Page 的透明 WebGL 在 WebKit 中使用预乘 Alpha 且不污染透明区域", async ({ page }, testInfo) => {
+  test.skip(!testInfo.project.name.includes("webkit"), "该回归针对 WebKit 页面合成器");
+  await page.goto("/?theme=light");
+
+  const contexts = await page.locator("canvas").evaluateAll((canvases) => canvases.map((canvas) =>
+    (canvas as HTMLCanvasElement).getContext("webgl")?.getContextAttributes(),
+  ));
+  expect(contexts).toHaveLength(3);
+  expect(contexts.every((attributes) => attributes?.alpha && attributes.premultipliedAlpha && !attributes.depth)).toBe(true);
+
+  for (const [selector, xRatio, yRatio] of [
+    [".hero__shader", .05, .72],
+    [".premise__shader", .145, .48],
+    [".flow__shader", .005, .4],
+  ] as const) {
+    const canvas = page.locator(selector);
+    await canvas.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(900);
+    const box = await canvas.boundingBox();
+    expect(box).not.toBeNull();
+    const clip = {
+      x: Math.floor(box!.x + box!.width * xRatio),
+      y: Math.floor(box!.y + box!.height * yRatio),
+      width: 8,
+      height: 8,
+    };
+    const withShader = await page.screenshot({ clip });
+    await canvas.evaluate((element) => { element.style.visibility = "hidden"; });
+    const withoutShader = await page.screenshot({ clip });
+    await canvas.evaluate((element) => { element.style.visibility = ""; });
+    expect(averageRgbDifference(withShader, withoutShader), selector).toBeLessThan(1);
+  }
 });
 
 test("Landing Page 暗色主题使用夜间主图，平板宽度的通知卡片位于联系 Mockup 上层", async ({ page }) => {
