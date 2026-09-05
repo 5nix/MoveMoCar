@@ -119,9 +119,19 @@ const verificationTags = (options: SeoOptions): HtmlTagDescriptor[] => {
   if (google) values.set("google-site-verification", google);
   if (bing) values.set("msvalidate.01", bing);
   if (options.siteVerification?.trim()) {
+    // Dashboard values keep quotes that dotenv normally removes.
+    let source = options.siteVerification.trim().replace(/^SITE_VERIFICATION_META\s*=\s*/, "");
+    if (source.startsWith("'") && source.endsWith("'")) source = source.slice(1, -1).trim();
     let parsed: unknown;
-    try { parsed = JSON.parse(options.siteVerification); }
-    catch { throw new Error("SITE_VERIFICATION_META 必须是 JSON 对象，格式为 {\"验证标签名\":\"验证值\"}"); }
+    try {
+      try { parsed = JSON.parse(source); }
+      catch {
+        if (!source.startsWith('"') || !source.endsWith('"')) throw new Error("Invalid JSON");
+        parsed = JSON.parse(source.slice(1, -1));
+      }
+      if (typeof parsed === "string") parsed = JSON.parse(parsed);
+    }
+    catch { throw new Error("SITE_VERIFICATION_META 格式错误：请填写 {\"验证标签名\":\"验证值\"}，不能只填写验证值或 HTML 标签。Cloudflare Pages 值字段无需添加变量名或外层引号。"); }
     if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
       throw new Error("SITE_VERIFICATION_META 必须是标签名与字符串验证值组成的 JSON 对象");
     }
