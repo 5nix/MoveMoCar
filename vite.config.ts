@@ -118,7 +118,7 @@ const verificationTags = (options: SeoOptions): HtmlTagDescriptor[] => {
   const bing = options.bingVerification?.trim();
   if (google) values.set("google-site-verification", google);
   if (bing) values.set("msvalidate.01", bing);
-  if (options.siteVerification?.trim()) {
+  if (options.siteVerification?.trim() && !options.siteVerification.trim().startsWith("<")) {
     // Dashboard values keep quotes that dotenv normally removes.
     let source = options.siteVerification.trim().replace(/^SITE_VERIFICATION_META\s*=\s*/, "");
     if (source.startsWith("'") && source.endsWith("'")) source = source.slice(1, -1).trim();
@@ -131,15 +131,15 @@ const verificationTags = (options: SeoOptions): HtmlTagDescriptor[] => {
       }
       if (typeof parsed === "string") parsed = JSON.parse(parsed);
     }
-    catch { throw new Error("SITE_VERIFICATION_META 格式错误：请填写 {\"验证标签名\":\"验证值\"}，不能只填写验证值或 HTML 标签。Cloudflare Pages 值字段无需添加变量名或外层引号。"); }
+    catch { /* Optional metadata must not prevent the site from building. */ }
     if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
-      throw new Error("SITE_VERIFICATION_META 必须是标签名与字符串验证值组成的 JSON 对象");
-    }
-    for (const [name, content] of Object.entries(parsed)) {
-      if (!name.trim() || typeof content !== "string" || !content.trim()) {
-        throw new Error("SITE_VERIFICATION_META 的标签名和验证值必须为非空字符串");
+      console.warn("[SEO] 已跳过无法识别的 SITE_VERIFICATION_META；请直接粘贴平台提供的完整 <meta … /> 标签。网站将正常构建，但本次不会添加该验证标签。");
+    } else {
+      for (const [name, content] of Object.entries(parsed)) {
+        if (name.trim() && typeof content === "string" && content.trim()) {
+          values.set(name.trim(), content.trim());
+        }
       }
-      values.set(name.trim(), content.trim());
     }
   }
   return Array.from(values, ([name, content]) => ({
@@ -164,6 +164,8 @@ const sitemapEntry = (siteUrl: string, page: SeoPage, locale: "zh-CN" | "en") =>
 const seoPlugin = (options: SeoOptions): Plugin => {
   const publicSiteUrl = validPublicUrl(options.siteUrl);
   const siteVerificationTags = verificationTags(options);
+  // Trusted build-time HTML supplied by the site owner, never visitor input.
+  const verificationHtml = options.siteVerification?.trim().startsWith("<") ? options.siteVerification.trim() : "";
 
   return {
     name: "movemocar-seo-gate",
@@ -173,10 +175,13 @@ const seoPlugin = (options: SeoOptions): Plugin => {
         const page = seoPages.get(context.path);
         const canIndex = Boolean(publicSiteUrl && page);
         const robots = canIndex ? "index, follow" : "noindex, nofollow";
-        const transformed = html.replace(
+        let transformed = html.replace(
           /<meta\s+name=["']robots["'][^>]*>/i,
           `<meta name="robots" content="${robots}" />`,
         );
+        if (context.path === "/index.html" && verificationHtml) {
+          transformed = transformed.replace(/<\/head>/i, () => `${verificationHtml}\n</head>`);
+        }
 
         const homepageTags = context.path === "/index.html" ? siteVerificationTags : [];
         if (!canIndex || !page) return { html: transformed, tags: homepageTags };
