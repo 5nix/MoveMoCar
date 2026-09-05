@@ -14,6 +14,7 @@ type SeoOptions = {
   siteUrl: string;
   googleVerification?: string;
   bingVerification?: string;
+  siteVerification?: string;
 };
 
 const seoPages = new Map<string, SeoPage>([
@@ -112,12 +113,28 @@ const structuredDataTag = (siteUrl: string, page: SeoPage): HtmlTagDescriptor =>
 });
 
 const verificationTags = (options: SeoOptions): HtmlTagDescriptor[] => {
-  const tags: HtmlTagDescriptor[] = [];
+  const values = new Map<string, string>();
   const google = options.googleVerification?.trim();
   const bing = options.bingVerification?.trim();
-  if (google) tags.push({ tag: "meta", attrs: { name: "google-site-verification", content: google }, injectTo: "head" });
-  if (bing) tags.push({ tag: "meta", attrs: { name: "msvalidate.01", content: bing }, injectTo: "head" });
-  return tags;
+  if (google) values.set("google-site-verification", google);
+  if (bing) values.set("msvalidate.01", bing);
+  if (options.siteVerification?.trim()) {
+    let parsed: unknown;
+    try { parsed = JSON.parse(options.siteVerification); }
+    catch { throw new Error("SITE_VERIFICATION_META 必须是 JSON 对象，格式为 {\"验证标签名\":\"验证值\"}"); }
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+      throw new Error("SITE_VERIFICATION_META 必须是标签名与字符串验证值组成的 JSON 对象");
+    }
+    for (const [name, content] of Object.entries(parsed)) {
+      if (!name.trim() || typeof content !== "string" || !content.trim()) {
+        throw new Error("SITE_VERIFICATION_META 的标签名和验证值必须为非空字符串");
+      }
+      values.set(name.trim(), content.trim());
+    }
+  }
+  return Array.from(values, ([name, content]) => ({
+    tag: "meta", attrs: { name, content }, injectTo: "head" as const,
+  }));
 };
 
 const sitemapEntry = (siteUrl: string, page: SeoPage, locale: "zh-CN" | "en") => {
@@ -136,6 +153,7 @@ const sitemapEntry = (siteUrl: string, page: SeoPage, locale: "zh-CN" | "en") =>
 
 const seoPlugin = (options: SeoOptions): Plugin => {
   const publicSiteUrl = validPublicUrl(options.siteUrl);
+  const siteVerificationTags = verificationTags(options);
 
   return {
     name: "movemocar-seo-gate",
@@ -150,14 +168,15 @@ const seoPlugin = (options: SeoOptions): Plugin => {
           `<meta name="robots" content="${robots}" />`,
         );
 
-        if (!canIndex || !page) return transformed;
+        const homepageTags = context.path === "/index.html" ? siteVerificationTags : [];
+        if (!canIndex || !page) return { html: transformed, tags: homepageTags };
         return {
           html: transformed,
           tags: [
             { tag: "link", attrs: { rel: "canonical", href: `${publicSiteUrl}${page.path}` }, injectTo: "head" },
             ...alternateTags(publicSiteUrl, page),
             ...socialTags(publicSiteUrl, page),
-            ...verificationTags(options),
+            ...homepageTags,
             structuredDataTag(publicSiteUrl, page),
           ],
         };
@@ -184,7 +203,7 @@ const seoPlugin = (options: SeoOptions): Plugin => {
 };
 
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), ["VITE_SITE_URL", "VITE_GOOGLE_SITE_VERIFICATION", "VITE_BING_SITE_VERIFICATION"]);
+  const env = loadEnv(mode, process.cwd(), ["VITE_SITE_URL", "VITE_GOOGLE_SITE_VERIFICATION", "VITE_BING_SITE_VERIFICATION", "SITE_VERIFICATION_META"]);
 
   return {
     base: "./",
@@ -192,6 +211,7 @@ export default defineConfig(({ mode }) => {
       siteUrl: env.VITE_SITE_URL,
       googleVerification: env.VITE_GOOGLE_SITE_VERIFICATION,
       bingVerification: env.VITE_BING_SITE_VERIFICATION,
+      siteVerification: env.SITE_VERIFICATION_META,
     })],
     build: {
       rollupOptions: {
